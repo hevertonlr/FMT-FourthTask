@@ -3,6 +3,8 @@ package com.fmt.biblioteca.services;
 import com.fmt.biblioteca.entities.Emprestimo;
 import com.fmt.biblioteca.entities.Livro;
 import com.fmt.biblioteca.entities.Membro;
+import com.fmt.biblioteca.handlers.RestConflictException;
+import com.fmt.biblioteca.handlers.RestNotFoundException;
 import com.fmt.biblioteca.models.EmprestimoModel;
 import com.fmt.biblioteca.repositories.EmprestimoRepository;
 import com.fmt.biblioteca.repositories.LivroRepository;
@@ -29,18 +31,18 @@ public class EmprestimoService {
     }
 
 
-    public Emprestimo create(EmprestimoModel model) throws RuntimeException {
-        Livro livro = livroRepository.findById(model.getIdLivro()).orElseThrow(() -> new RuntimeException("Livro não encontrado!"));
+    public Emprestimo create(EmprestimoModel model) {
+        Livro livro = livroRepository.findById(model.getIdLivro()).orElseThrow(() -> new RestNotFoundException("Livro não encontrado!"));
 
-        Membro membro = membroRepository.findById(model.getIdMembro()).orElseThrow(() -> new RuntimeException("Membro não encontrado!"));
+        Membro membro = membroRepository.findById(model.getIdMembro()).orElseThrow(() -> new RestNotFoundException("Membro não encontrado!"));
 
         if (emprestimoRepository.existsByMembro_IdAndLivro_IdAndDataDevolucao(model.getIdMembro(), model.getIdLivro(), null))
-            throw new RuntimeException("Emprestimo já realizado!");
+            throw new RestConflictException("Emprestimo já realizado!");
 
         return emprestimoRepository.save(new Emprestimo(membro,livro));
     }
 
-    public Emprestimo update(EmprestimoModel model) throws Exception {
+    public Emprestimo update(EmprestimoModel model) {
         Emprestimo existent = emprestimoRepository.findFirstByMembro_IdAndLivro_IdAndDataDevolucao(model.getIdMembro(), model.getIdLivro(), null).orElseThrow(() -> new RuntimeException("Emprestimo não encontrado!"));
         existent.setDataDevolucao(LocalDateTime.now());
         emprestimoRepository.update(existent.getId(), existent.getDataDevolucao());
@@ -48,6 +50,8 @@ public class EmprestimoService {
     }
 
     public void delete(Long id) {
-        emprestimoRepository.deleteById(id);
+        int deleted = emprestimoRepository.deleteEmprestimoById(id);
+        if(deleted==0)
+            throw new RestNotFoundException("Emprestimo não encontrado!");
     }
 }

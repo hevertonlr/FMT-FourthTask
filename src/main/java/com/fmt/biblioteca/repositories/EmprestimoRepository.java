@@ -25,7 +25,7 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
                                                          Long idLivro,
                                                          LocalDateTime dataDevolucao);
 
-
+    Integer deleteEmprestimoById(Long id);
 
     @Modifying
     @Transactional

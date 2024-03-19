@@ -14,12 +14,14 @@ import java.util.List;
 public interface MembroRepository extends JpaRepository<Membro, Long> {
     List<Membro> findAllByOrderByIdAsc();
 
+    Integer deleteMembroById(Long id);
+
     @Modifying
     @Transactional
     @Query("UPDATE Membro e SET" +
-            " e.nome = :nome," +
-            " e.endereco = :endereco," +
-            " e.telefone = :telefone" +
+            " e.nome = COALESCE(:nome,e.nome)," +
+            " e.endereco = COALESCE(:endereco,e.endereco)," +
+            " e.telefone = COALESCE(:telefone,e.telefone)" +
             " WHERE e.id = :id")
     void update(@Param("id") Long id,
                 @Param("nome") String nome,

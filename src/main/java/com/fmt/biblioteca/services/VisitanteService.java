@@ -1,6 +1,7 @@
 package com.fmt.biblioteca.services;
 
 import com.fmt.biblioteca.entities.Visitante;
+import com.fmt.biblioteca.handlers.RestNotFoundException;
 import com.fmt.biblioteca.models.VisitanteModel;
 import com.fmt.biblioteca.repositories.VisitanteRepository;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,9 @@ public class VisitanteService {
         return repository.save(new Visitante(model));
     }
 
-    public Visitante update(Visitante entity) throws RuntimeException {
+    public Visitante update(Visitante entity) throws RestNotFoundException {
         Visitante existent = repository.findById(entity.getId())
-                .orElseThrow(() -> new RuntimeException("Visitante não encontrado!"));
+                .orElseThrow(() -> new RestNotFoundException("Visitante não encontrado!"));
         existent.setId(entity.getId());
         existent.setNome(entity.getNome());
         existent.setTelefone(entity.getTelefone());
@@ -36,6 +37,8 @@ public class VisitanteService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        int deleted = repository.deleteVisitanteById(id);
+        if(deleted==0)
+            throw new RestNotFoundException("Visitante não encontrado!");
     }
 }

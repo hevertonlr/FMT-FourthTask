@@ -14,11 +14,12 @@ import java.util.List;
 public interface VisitanteRepository extends JpaRepository<Visitante, Long> {
     List<Visitante> findAllByOrderByIdAsc();
 
+    Integer deleteVisitanteById(Long id);
     @Modifying
     @Transactional
     @Query("UPDATE Visitante e SET" +
-            " e.nome = :nome," +
-            " e.telefone = :telefone" +
+            " e.nome = COALESCE(:nome,e.nome)," +
+            " e.telefone = COALESCE(:telefone,e.telefone)" +
             " WHERE e.id = :id")
     void update(@Param("id") Long id,
                 @Param("nome") String nome,

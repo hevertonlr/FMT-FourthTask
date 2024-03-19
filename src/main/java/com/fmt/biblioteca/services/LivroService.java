@@ -1,6 +1,7 @@
 package com.fmt.biblioteca.services;
 
 import com.fmt.biblioteca.entities.Livro;
+import com.fmt.biblioteca.handlers.RestNotFoundException;
 import com.fmt.biblioteca.models.LivroModel;
 import com.fmt.biblioteca.repositories.LivroRepository;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,9 @@ public class LivroService {
         return repository.save(new Livro(model));
     }
 
-    public Livro update(Livro entity) throws Exception {
+    public Livro update(Livro entity) {
         Livro existent = repository.findById(entity.getId())
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado!"));
+                .orElseThrow(() -> new RestNotFoundException("Livro não encontrado!"));
         existent.setTitulo(entity.getTitulo());
         existent.setAutor(entity.getAutor());
         existent.setAnoPublicacao(entity.getAnoPublicacao());
@@ -37,11 +38,8 @@ public class LivroService {
     }
 
     public void delete(Long id) {
-//        try {
-        repository.deleteById(id);
-//        }catch (Exception e){
-//            return new ResponseEntity<>("teste erro", NOT_FOUND);
-//            throw  HttpClientErrorException.create(HttpStatus.NOT_FOUND, "not found teste", null, null, null);
-//        }
+        int deleted = repository.deleteLivroById(id);
+        if(deleted==0)
+            throw new RestNotFoundException("Livro não encontrado!");
     }
 }

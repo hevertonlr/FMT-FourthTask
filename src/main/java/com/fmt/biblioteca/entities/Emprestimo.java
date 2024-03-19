@@ -17,8 +17,10 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "data_emprestimo", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private LocalDateTime dataEmprestimo = LocalDateTime.now();
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "data_devolucao")
     private LocalDateTime dataDevolucao;
 

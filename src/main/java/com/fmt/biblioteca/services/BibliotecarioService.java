@@ -2,6 +2,7 @@ package com.fmt.biblioteca.services;
 
 
 import com.fmt.biblioteca.entities.Bibliotecario;
+import com.fmt.biblioteca.handlers.RestNotFoundException;
 import com.fmt.biblioteca.models.BibliotecarioModel;
 import com.fmt.biblioteca.repositories.BibliotecarioRepository;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,9 @@ public class BibliotecarioService {
         return repository.save(new Bibliotecario(model));
     }
 
-    public Bibliotecario update(Bibliotecario entity) throws RuntimeException {
+    public Bibliotecario update(Bibliotecario entity) {
         Bibliotecario existent = repository.findById(entity.getId())
-                .orElseThrow(() -> new RuntimeException("Bibliotecário não encontrado!"));
+                .orElseThrow(() -> new RestNotFoundException("Bibliotecário não encontrado!"));
         existent.setNome(entity.getNome());
         existent.setEmail(entity.getEmail());
         existent.setSenha(entity.getSenha());
@@ -38,7 +39,9 @@ public class BibliotecarioService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        int deleted = repository.deleteBibliotecarioById(id);
+        if(deleted==0)
+            throw new RestNotFoundException("Emprestimo não encontrado!");
     }
 
 

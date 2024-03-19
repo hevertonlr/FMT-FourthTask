@@ -14,12 +14,14 @@ import java.util.List;
 public interface LivroRepository extends JpaRepository<Livro, Long> {
     List<Livro> findAllByOrderByIdAsc();
 
+    Integer deleteLivroById(Long id);
+
     @Modifying
     @Transactional
     @Query("UPDATE Livro e SET" +
-            " e.titulo = :titulo," +
-            " e.autor = :autor," +
-            " e.anoPublicacao = :anoPublicacao" +
+            " e.titulo = COALESCE(:titulo,e.titulo)," +
+            " e.autor = COALESCE(:autor,e.autor)," +
+            " e.anoPublicacao = COALESCE(:anoPublicacao,e.anoPublicacao)" +
             " WHERE e.id = :id")
     void update(@Param("id") Long id,
                 @Param("titulo") String titulo,

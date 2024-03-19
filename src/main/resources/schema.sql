@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS biblioteca;
+
 CREATE TABLE IF NOT EXISTS visitante (
     id bigserial PRIMARY KEY,
     nome varchar(255) NOT NULL,
@@ -26,7 +28,7 @@ CREATE TABLE IF NOT EXISTS emprestimo (
     id bigserial PRIMARY KEY,
     data_devolucao timestamp(6),
     data_emprestimo timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    id_livro int8 NOT NULL REFERENCES livro(id),
-    id_membro int8 NOT NULL REFERENCES membro(id)
+    id_livro int NOT NULL REFERENCES livro(id),
+    id_membro int NOT NULL REFERENCES membro(id)
 );
 

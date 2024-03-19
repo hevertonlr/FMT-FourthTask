@@ -14,12 +14,13 @@ import java.util.List;
 public interface BibliotecarioRepository extends JpaRepository<Bibliotecario, Long> {
     List<Bibliotecario> findAllByOrderByIdAsc();
 
+    Integer deleteBibliotecarioById(Long id);
     @Modifying
     @Transactional
     @Query("UPDATE Bibliotecario e SET" +
-            " e.nome = :nome," +
-            " e.email = :email," +
-            " e.senha = :senha" +
+            " e.nome = COALESCE(:nome,e.nome) ," +
+            " e.email = COALESCE(:email,e.email)," +
+            " e.senha = COALESCE(:senha,e.senha)" +
             " WHERE e.id = :id")
     void update(@Param("id") Long id,
                 @Param("nome") String nome,

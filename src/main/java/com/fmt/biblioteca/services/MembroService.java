@@ -1,6 +1,7 @@
 package com.fmt.biblioteca.services;
 
 import com.fmt.biblioteca.entities.Membro;
+import com.fmt.biblioteca.handlers.RestNotFoundException;
 import com.fmt.biblioteca.models.MembroModel;
 import com.fmt.biblioteca.repositories.MembroRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class MembroService {
         return repository.save(new Membro(model));
     }
 
-    public Membro update(Membro entity) throws Exception {
+    public Membro update(Membro entity) {
 
         repository.update(entity.getId(),
                 entity.getNome(),
@@ -33,6 +34,8 @@ public class MembroService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        int deleted = repository.deleteMembroById(id);
+        if(deleted==0)
+            throw new RestNotFoundException("Membro não encontrado!");
     }
 }
